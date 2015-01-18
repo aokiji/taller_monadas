@@ -7,6 +7,15 @@
 #define BOOST_TEST_MODULE ej
 #include <boost/test/included/unit_test.hpp>
 
+namespace std {
+template<typename X, typename Y>
+std::ostream& operator<<(std::ostream& os, const std::pair<X, Y>& p)
+{
+    os << "(" << p.first << ", " << p.second << ")";
+    return os;
+}
+};
+
 template<typename T>
 std::ostream& operator<<(std::ostream& os,const std::list<T>& l)
 {
@@ -53,20 +62,30 @@ auto operator>>=(const list<T>& l, F f)
     return r;
 }
 
-template<template<typename> class M, typename T, typename F>
-auto transform(const M<T>& m, F f)
+template<typename Pred>
+auto filter(Pred pred)
 {
-    return m >>= [&] (auto x) {return mreturn<M>(f(x));};
+    // return function object that accepts some x and returns
+    // mreturn<list>(x) if pred(x) or an empty list otherwise
 }
 
-list<int> ejercicio(const list<int>& l1, const list<int>& l2) {
-    /* Implementar */
+// plantilla base para los ejercicios
+auto ejercicioX(const list<int>& l1, const list<int>& l2) {
+    return l1 >>= [&] (const int & x) {
+            return l2 >>= [&] (const int & y) {
+                return mreturn<list>(x + y);
+            };
+        };
 }
 
 
 BOOST_AUTO_TEST_SUITE( ej )
 BOOST_AUTO_TEST_CASE( test )
 {
-    BOOST_CHECK_EQUAL(to_string(ejercicio(list<int>{0, 1, 2}, list<int>{1, 2, 3})), "[1 2 3 2 3 4 3 4 5]");
+    BOOST_CHECK_EQUAL(to_string(ejercicio1(list<int>{0, 1, 2}, list<int>{1, 2, 3})), "[2 2 4 4]");
+    BOOST_CHECK_EQUAL(to_string(ejercicio2(list<int>{0, 1, 2}, list<int>{1, 2, 3})), "[1 2 3 3 4 5]");
+    BOOST_CHECK_EQUAL(to_string(ejercicio3(list<int>{0, 1, 2}, list<int>{1, 2, 3})), "[2 3 4]");
+    BOOST_CHECK_EQUAL(to_string(ejercicio4(list<int>{0, 1, 2}, list<int>{1, 2, 3})), "[(0, 1) (0, 2) (0, 3) (1, 1) (1, 2) (1, 3) (2, 1) (2, 2) (2, 3)]");
+    BOOST_CHECK_EQUAL(to_string(ejercicio5(list<int>{0, 1, 2}, list<int>{1, 2, 3})), "[(0, 1) (0, 2) (0, 3) (1, 2) (2, 1) (2, 2) (2, 3)]");
 }
 BOOST_AUTO_TEST_SUITE_END()

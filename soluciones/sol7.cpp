@@ -44,7 +44,7 @@ M<T> mreturn(const T &x)
 template<typename T, typename F>
 auto operator>>=(const list<T>& l, F f)
 {
-    list<T> r{};
+    decltype(f(std::declval<T>())) r{};
     for (const auto & x: l) {
         auto lf = f(x);
         r.splice(r.end(), lf);
