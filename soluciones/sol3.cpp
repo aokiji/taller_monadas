@@ -13,7 +13,7 @@ std::ostream& operator<<(std::ostream& os,const boost::optional<T>& x)
 
 using namespace boost;
 
-optional<double> inv(double x)
+optional<int> inv(double x)
 {
   if(x==0.0)return none;
   else      return 1.0/x;
@@ -31,13 +31,15 @@ optional<double> arcsin(double x)
   else             return std::asin(x);
 }
 
-template<typename F>
-optional<double> call(const optional<double> &x, F f)
+// modificar call por el cambio de tipos
+template<typename T, typename F>
+auto call(const optional<T> &x, F f) 
 {
     return x ? f(x.get()) : none;
 }
 
-optional<double> ias(double x)
+// modificar ias por el cambio de tipos
+optional<int> ias(double x)
 {
     return call(call(sqr(x), arcsin), inv);
 }
@@ -47,6 +49,7 @@ BOOST_AUTO_TEST_CASE( test )
 {
     BOOST_CHECK_EQUAL(ias(-1), none);
     BOOST_CHECK_EQUAL(ias(4), none);
-    BOOST_CHECK_CLOSE(ias(0.75).get(), 0.954929658, 1e-7);
+    BOOST_CHECK_EQUAL(ias(0.75).get(), 0);
+    BOOST_CHECK_EQUAL(ias(0.25).get(), 1);
 }
 BOOST_AUTO_TEST_SUITE_END()
