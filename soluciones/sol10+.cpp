@@ -44,8 +44,7 @@ cont<int> fac(int n)
 {
     ++contador;
     return n == 1 ? mreturn<cont>(1) : 
-        (cont<int>(n-1) >>= [] (const auto& f) {
-            return fac(f);}) >>= [=] (const auto& f) {
+        (cont<int>(n-1) >>= fac)>>= [=] (const auto& f) {
                 return prod(f, n);};
 }
 
